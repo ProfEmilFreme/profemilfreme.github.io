@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Exercícios — Listas Encadeadas e Ordenação</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #1e293b;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --accent-dark: #1d4ed8;
+      --code-bg: #f1f5f9;
+      --code-text: #0f172a;
+      --badge-bg: #e0e7ff;
+      --badge-text: #3730a3;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: #ffffff;
+      padding: 2.25rem 2.5rem;
+      border-radius: 14px;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .header-text h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.35rem;
+    }
+
+    .header-text p {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+    }
+
+    .meta-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.85rem;
+    }
+
+    .meta-tag {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #f8fafc;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+    }
+
+    .print-btn {
+      background: #ffffff;
+      color: #0f172a;
+      border: none;
+      padding: 0.65rem 1.15rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.1s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    .print-btn:hover {
+      background: #f1f5f9;
+      transform: translateY(-1px);
+    }
+
+    .section {
+      margin-bottom: 2.25rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .section-num {
+      background: var(--accent);
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .exercise-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.35rem 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+      transition: border-color 0.15s ease;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .exercise-card:hover {
+      border-color: #cbd5e1;
+    }
+
+    .exercise-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .exercise-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .ex-number {
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .done-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .done-toggle input {
+      accent-color: var(--accent);
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+
+    .exercise-card.completed {
+      background: #f8fafc;
+      border-color: #bfdbfe;
+    }
+
+    .exercise-card.completed .exercise-title {
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    .exercise-body p {
+      color: var(--text);
+      margin-bottom: 0.65rem;
+    }
+
+    .exercise-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    .exercise-body ul {
+      margin: 0.5rem 0 0.65rem 1.35rem;
+      color: var(--text);
+    }
+
+    .exercise-body ul:last-child {
+      margin-bottom: 0;
+    }
+
+    .exercise-body li {
+      margin-bottom: 0.35rem;
+    }
+
+    code {
+      font-family: "Cascadia Code", "Fira Code", Consolas, "Courier New", monospace;
+      font-size: 0.88em;
+      background-color: var(--code-bg);
+      color: var(--code-text);
+      padding: 0.14rem 0.38rem;
+      border-radius: 5px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .math {
+      font-family: Georgia, "Times New Roman", serif;
+      font-style: italic;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 2.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 640px) {
+      header {
+        padding: 1.5rem;
+      }
+      .exercise-card {
+        padding: 1.15rem;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+        font-size: 11pt;
+      }
+      header {
+        background: #0f172a !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        box-shadow: none;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.25rem;
+      }
+      .print-btn,
+      .done-toggle {
+        display: none;
+      }
+      .exercise-card {
+        box-shadow: none;
+        border: 1px solid #cbd5e1;
+        padding: 0.9rem 1.1rem;
+        margin-bottom: 0.75rem;
+      }
+      .section {
+        margin-bottom: 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-text">
+        <h1>Lista de Exercícios: Listas Encadeadas e Ordenação</h1>
+        <p>Estruturas de Dados em Linguagem C &bull; Prof. Emil Freme &bull; 2026</p>
+        <div class="meta-tags">
+          <span class="meta-tag">10 Exercícios</span>
+          <span class="meta-tag">Arrays vs. Listas</span>
+          <span class="meta-tag">Ponteiros &amp; Memória</span>
+          <span class="meta-tag">Aplicações em Jogos</span>
+        </div>
+      </div>
+      <button class="print-btn" onclick="window.print()">Imprimir / Salvar PDF</button>
+    </header>
+
+    <main>
+      <!-- Seção 1 -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">1</span>
+          <h2>Comparação entre Arrays e Listas Ligadas Simples</h2>
+        </div>
+
+        <article class="exercise-card">
+          <div class="exercise-top">
+            <h3 class="exercise-title"><span class="ex-number">01.</span> Memória Contígua, Acesso e Cache</h3>
+            <label class="done-toggle"><input type="checkbox"> Concluído</label>
+          </div>
+          <div class="exercise-body">
+            <p>Explique a diferença entre como os dados são armazenados na memória RAM em um array e em uma lista encadeada simples. A partir disso, justifique por que:</p>
+            <ul>
+              <li>acessar o elemento de índice <code>42</code> em um array tem custo imediato, enquanto na lista encadeada o acesso é sequencial;</li>
+              <li>processadores modernos conseguem otimizar melhor a leitura sequencial de um array do que a de uma lista encadeada.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="exercise-card">
+          <div class="exercise-top">
+            <h3 class="exercise-title"><span class="ex-number">02.</span> Inserção e Redimensionamento</h3>
+            <label class="done-toggle"><input type="checkbox"> Concluído</label>
+          </div>
+          <div class="exercise-body">
+            <p>Suponha que um programa mantenha uma sequência ordenada de pontuações. Descreva o que acontece na memória ao inserir um novo elemento na 2ª posição nos três cenários abaixo, diferenciando o custo de <strong>encontrar a posição</strong> do custo de <strong>efetuar a inserção</strong>:</p>
+            <ul>
+              <li>em um array de 100 posições com 60 elementos ocupados;</li>
+              <li>em um array alocado dinamicamente de 60 posições que já está completamente cheio;</li>
+              <li>em uma lista encadeada simples com 60 nós.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="exercise-card">
+          <div class="exercise-top">
+            <h3 class="exercise-title"><span class="ex-number">03.</span> Consumo de Memória (<em>Overhead</em> vs. Desperdício)</h3>
+            <label class="done-toggle"><input type="checkbox"> Concluído</label>
+          </div>
+          <div class="exercise-body">
+            <p>Considere um registro de jogador composto por <code>char nome[32]</code> (32 bytes) e <code>int pontos</code> (4 bytes), em um sistema de 64 bits onde um ponteiro ocupa 8 bytes (desconsidere <em>padding</em> de alinhamento, ou indique-o como observação à parte).</p>
+            <ul>
+              <li>Calcule o acréscimo de memória (<em>overhead</em>) por elemento ao usar uma lista encadeada simples em vez de um array.</li>
+              <li>Apresente um exemplo numérico de cenário em que um array de tamanho fixo ainda desperdiça mais RAM do que a lista encadeada.</li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <!-- Seção 2 -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">2</span>
+          <h2>Usos de Listas Ligadas Simples</h2>
+        </div>
+
+        <article class="exercise-card">
+          <div class="exercise-top">
+            <h3 class="exercise-title"><span class="ex-number">04.</span> Construção, Percurso e Liberação Segura em C</h3>
+            <label class="done-toggle"><input type="checkbox"> Concluído</label>
+          </div>
+          <div class="exercise-body">
+            <p>Modele em C uma <code>struct RankingNode</code> contendo <code>char nome[32]</code>, <code>int pontos</code> e <code>struct RankingNode *next</code>. Implemente as três funções abaixo, garantindo verificação de falha na alocação (<code>NULL</code>) e ausência de <em>memory leaks</em>:</p>
+            <ul>
+              <li>inserção de um novo jogador no início da lista;</li>
+              <li>percurso para imprimir todos os jogadores e suas pontuações no terminal;</li>
+              <li><code>free_lista</code>, para liberar todos os nós da memória com segurança (explique em um comentário por que é necessário salvar <code>next</code> antes de chamar <code>free</code>).</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="exercise-card">
+          <div class="exercise-top">
+            <h3 class="exercise-title"><span class="ex-number">05.</span> Ordenação <em>In-Place</em> por Ponteiros (Insertion Sort)</h3>
+            <label class="done-toggle"><input type="checkbox"> Concluído</label>
+          </div>
+          <div class="exercise-body">
+            <p>Usando a <code>struct RankingNode</code> do exercício anterior, implemente uma função em C que ordene uma lista encadeada simples em <strong>ordem decrescente de pontuação</strong> utilizando o algoritmo <em>Insertion Sort</em> por <strong>religação de ponteiros</strong> (sem copiar <code>nome</code> e <code>pontos</code> de um nó para outro).</p>
+            <p>Em seguida, responda: qual é a vantagem de religar ponteiros em vez de trocar os dados internos quando a <code>struct</code> armazena muitos campos?</p>
+          </div>
+        </article>
+
+        <article class="exercise-card">
+          <div class="exercise-top">
+            <h3 class="exercise-title"><span class="ex-number">06.</span> Remoção Condicional e Corte de <em>Top-N</em></h3>
+            <label class="done-toggle"><input type="checkbox"> Concluído</label>
+          </div>
+          <div class="exercise-body">
+            <p>Para uma lista encadeada simples de jogadores (<code>nome</code> e <code>pontos</code>), implemente em C:</p>
+            <ul>
+              <li><code>int remover_abaixo_de(RankingNode **head, int corte)</code>: remove e libera com <code>free</code> todos os nós cuja pontuação seja estritamente menor que <code>corte</code>, retornando quantos nós foram removidos (tratando corretamente o caso em que o primeiro nó é removido);</li>
+              <li><code>void manter_top_n(RankingNode **head, int n)</code>: assumindo que a lista já está ordenada de forma decrescente, mantém apenas os <code>n</code> primeiros registros, garante que o último nó mantido aponte para <code>NULL</code> e libera a memória dos nós excedentes.</li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <!-- Seção 3 -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">3</span>
+          <h2>Avanços: Listas Duplamente Encadeadas e Circulares</h2>
+        </div>
+
+        <article class="exercise-card">
+          <div class="exercise-top">
+            <h3 class="exercise-title"><span class="ex-number">07.</span> Lista Duplamente Encadeada e Remoção Direta</h3>
+            <label class="done-toggle"><input type="checkbox"> Concluído</label>
+          </div>
+          <div class="exercise-body">
+            <p>Crie em C uma <code>struct DNode</code> com ponteiros <code>prev</code> e <code>next</code> (além de um campo de dado inteiro ou texto).</p>
+            <ul>
+              <li>Implemente a inserção no início atualizando corretamente <code>next</code> e <code>prev</code>.</li>
+              <li>Implemente <code>void remover_no(DNode **head, DNode *alvo)</code> capaz de remover e liberar o nó <code>alvo</code> recebendo apenas o ponteiro direto para ele, sem percorrer a lista desde o início.</li>
+              <li>Justifique por que essa mesma remoção em tempo constante (<span class="math">O</span>(1)) não é possível recebendo apenas o ponteiro <code>alvo</code> em uma lista simplesmente encadeada.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="exercise-card">
+          <div class="exercise-top">
+            <h3 class="exercise-title"><span class="ex-number">08.</span> Lista Encadeada Circular</h3>
+            <label class="done-toggle"><input type="checkbox"> Concluído</label>
+          </div>
+          <div class="exercise-body">
+            <p>Modele e implemente em C uma <strong>lista encadeada circular</strong> para representar um carrossel de opções (por exemplo, níveis de dificuldade <code>FACIL</code>, <code>NORMAL</code>, <code>DIFICIL</code>, <code>INSANO</code>), no qual o ponteiro <code>next</code> do último elemento aponta de volta para o primeiro.</p>
+            <ul>
+              <li>Implemente funções para inserir um novo item, avançar para o próximo item e percorrer/imprimir todos os elementos exatamente uma vez, além de uma função <code>free_circular</code> para liberar toda a lista.</li>
+              <li>Explique qual condição de parada substitui <code>atual != NULL</code> nos laços de percurso e de liberação para evitar loops infinitos.</li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <!-- Seção 4 -->
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">4</span>
+          <h2>Listas Ligadas Aplicadas a Jogos</h2>
+        </div>
+
+        <article class="exercise-card">
+          <div class="exercise-top">
+            <h3 class="exercise-title"><span class="ex-number">09.</span> Gerenciador de Efeitos Temporários (<em>Buffs</em> e <em>Debuffs</em>)</h3>
+            <label class="done-toggle"><input type="checkbox"> Concluído</label>
+          </div>
+          <div class="exercise-body">
+            <p>Em jogos de ação e RPG, um personagem pode estar sob múltiplos efeitos simultâneos com durações diferentes (como escudo por 5 turnos, veneno por 3 turnos e velocidade extra por 2 turnos). Modele uma lista encadeada simples <code>EfeitoNode</code> contendo <code>char nome[32]</code>, <code>int turnos_restantes</code> e <code>struct EfeitoNode *next</code>. Implemente uma função <code>atualizar_efeitos</code> que, a cada turno:</p>
+            <ul>
+              <li>decrementa <code>turnos_restantes</code> de todos os efeitos ativos;</li>
+              <li>remove e libera com <code>free</code> automaticamente os efeitos que chegarem a <code>0</code>, tratando corretamente o caso em que dois efeitos consecutivos — ou o primeiro da lista — expirem no mesmo turno.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="exercise-card">
+          <div class="exercise-top">
+            <h3 class="exercise-title"><span class="ex-number">10.</span> Controle Dinâmico de Projéteis e Desempenho em Tempo Real</h3>
+            <label class="done-toggle"><input type="checkbox"> Concluído</label>
+          </div>
+          <div class="exercise-body">
+            <p>Em jogos 2D de tiro (como <em>shoot 'em ups</em>), projéteis são criados e destruídos constantemente na tela.</p>
+            <ul>
+              <li>Modele uma lista encadeada simples de <code>ProjetilNode</code> (<code>int x</code>, <code>int y</code>, <code>int dy</code>, <code>struct ProjetilNode *next</code>) e implemente as funções <code>criar_projetil</code> (inserção) e <code>atualizar_projeteis</code> (soma <code>dy</code> à posição <code>y</code> de cada projétil e remove/libera com <code>free</code> aqueles que saírem do intervalo válido <code>0 &lt;= y &lt; altura_tela</code>).</li>
+              <li>Escreva um parágrafo explicando por que motores de jogos comerciais costumam evitar chamadas frequentes de <code>malloc</code>/<code>calloc</code> e <code>free</code> dentro do loop principal (30 ou 60 FPS), mesmo quando usam listas encadeadas para organizar entidades ativas (por exemplo, combinando ponteiros de lista com pools de memória pré-alocada).</li>
+            </ul>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      Lista de Exercícios — Listas Encadeadas e Ordenação em C &bull; 2026
+    </footer>
+  </div>
+
+  <script>
+    document.querySelectorAll('.done-toggle input').forEach((checkbox) => {
+      checkbox.addEventListener('change', (e) => {
+        const card = e.target.closest('.exercise-card');
+        card.classList.toggle('completed', e.target.checked);
+      });
+    });
+  </script>
+</body>
+</html>
